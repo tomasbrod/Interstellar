@@ -115,7 +115,7 @@ $radioactives = array(
 $mixture_ratios = array(
 	'LFO' => array( 'LiquidFuel'=>0.45, 'Oxidizer'=>0.55 ),
 	'HydroLOX' => array( 'LqdHydrogen'=>0.8, 'LqdOxygen'=>0.2 ),
-	'MethaLOX' => array( 'LqdMethane'=>0.456, 'LqdOxygen'=>0.544 ),
+	'MethaLOX' => array( 'LqdMethane'=>0.557, 'LqdOxygen'=>0.443 ),
 	'KeroLOX' => array( 'Kerosene'=>0.456, 'LqdOxygen'=>0.544 ),
 	'HydraNitro' => array( 'Hydrazine'=>0.51, 'NTO'=>0.49 ),
 	'HydrogenFluorine' => array( 'LqdHydrogen'=>0.66, 'LqdFluorine'=>0.34 ),

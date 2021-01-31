@@ -36,7 +36,6 @@ Todo:
 * capacitors
 * disable certain configs when mods are present/absent
 * light fuel tanks for light resources only
-* methalox mixture ratio
 * generic ore and rcs tanks
 * K&K radioactive tanks
 * flight switchable tanks
