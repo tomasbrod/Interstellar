@@ -33,6 +33,17 @@ $liquids = array(
 	'HTP',
 );
 
+$LightLiquids = array(
+	'LqdHydrogen',//425
+	'LqdMethane',//1809
+	'LqdDeuterium',//649
+	'LqdHelium',//714
+	'LqdHe3',//236
+	'LqdTritium',//1280
+	'LqdDiborane', //1684
+	'FusionPellets', //864
+);
+
 $solids = array(
 	'Alumina',
 	'Aluminium',
@@ -267,7 +278,7 @@ echo <<<EOD
 	!RESOURCE[LiterVolume] {}
 }\n
 EOD;
-file_put_contents("CT2500.cfg", ob_get_clean() );
+file_put_contents("LiquidCT.cfg", ob_get_clean() );
 
 
 /******* Gibson Cargo Container *******/
@@ -323,7 +334,7 @@ echo <<<EOD
 	!RESOURCE[LiterVolume] {}
 }\n
 EOD;
-file_put_contents("CC2500.cfg", ob_get_clean() );
+file_put_contents("SolidCC.cfg", ob_get_clean() );
 
 
 /******* Gibson Radioactive Fuel Container*******/
@@ -379,7 +390,7 @@ echo <<<EOD
 	!RESOURCE[LiterVolume] {}
 }\n
 EOD;
-file_put_contents("RFC2500.cfg", ob_get_clean() );
+file_put_contents("NuclearRFC.cfg", ob_get_clean() );
 
 
 /******* Generic patch for Liquid tanks *******/
@@ -447,9 +458,9 @@ echo
 		{
 			name = $name\n";
 if(isset($mixture_ratios[$name])):
-$name_id = $name;
-if($name!='LFO')
-	$name_id = "KIT_$name";
+//$name_id = $name;
+//if($name!='LFO')
+$name_id = "KIT_$name";
 echo
 "			title = #\$@B9_TANK_TYPE[$name_id]/title\$
 			tankType = $name_id\n";
@@ -510,9 +521,6 @@ ob_start();
 		!TANK_TYPE_OPTION,* {}
 <?php
 foreach($mixture_ratios as $name=>$contents):
-$name_id = $name;
-if($name!='LFO')
-	$name_id = "KIT_$name";
 echo
 "		TANK_TYPE_OPTION
 		{
@@ -557,24 +565,26 @@ file_put_contents("ProceduralPartsTanks.cfg", ob_get_clean() );
 ob_start();
 //Oxidiser based mixtures are defined in CryoTanks/CryoTanksFuelTankTypes.cfg
 foreach($mixture_ratios as $name=>$contents):
-if($name=='LFO') continue; //already devined by B9
+//even thought LFO is predefined by B9, use our own definition to account for
+//stock resource volume of 5 and dry weight configuration
 echo
 "B9_TANK_TYPE
 {
 	name = KIT_$name
 	//title = #LOC_B9PartSwitch_tank_type_$name
 	title = $name
-	tankMass = 0.000125
-	tankCost = 0.25
+	tankMass = 0
+	tankCost = 0
 ";
 $col = array();
 foreach($contents as $res => $rat):
 $col[] = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$res);
+if(in_array($res, $NonUnityVolumeResources)) $rat/=5;
 echo
 "	RESOURCE
 	{
 		name = $res
-		unitsPerKL = $rat
+		unitsPerVolume = $rat
 	}
 ";
 if(isset($col[0])&&isset($colors[$col[0]]))
@@ -625,4 +635,7 @@ RFC2501 2.4t
 X88 692kg kero (1:31.99), 425kg meth (1:26.98)
 stock:
 FL-T400 2.250t 0.250t - 250kg (1:8)
+smurff
+FL-T400 2.06t 0.06t (1:33)
+H250-32 6.938t 0.478t (1:13)
 */
