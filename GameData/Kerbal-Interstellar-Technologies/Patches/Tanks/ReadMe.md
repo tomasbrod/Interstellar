@@ -24,44 +24,37 @@ Part definition exports variable when it wants to be patched with fuel configs:
 
 TankType = Liquid
 TankType = Double
-TankType = Solid
-
-
+(TankType = Solid)
+(TankType = Radioactive)
+(TankType = LightCryo (Hydrogen and other light cryogenic fuels))
 
 Todo:
 
-* IST - same transforms as CT&CC
-* wetworks
+* wetworks - B9 does not support crew...
 * antimatter
 * verify dry mass and cost of all touched parts
 * capacitors
 * disable certain configs when mods are present/absent
-
-Generic tanks to configure:
-
-* inline spherical
-* big sphere tank
-* inflatable inline
-* K&K ContainerSystem
-* wrapper
-* radial spherical
-* Hex (segment, core, structure)
-* stock stack tanks
-* stock airplane tanks
-* stock ore and rcs tanks
-* tanks from WarpPlugin
+* light fuel tanks for light resources only
+* methalox mixture ratio
+* generic ore and rcs tanks
+* K&K radioactive tanks
+* flight switchable tanks
+* nertea's CryoTanks (they look good!)
+* support [SMURFF](https://forum.kerbalspaceprogram.com/index.php?/topic/117992-17-19-smurff-simple-module-adjustments-for-real-ish-fuel-mass-fractions-191-02019-nov-12/)
 
 Flight switchable: CT, CC, wetworks, k&k, mk3
 
 Discounted: (tbd)
 
-WarpPlugin other tanks:
-InterstellarGasTank-Wedge: ??
-crashpad: gas airbag :P
-RV*: similar looking radial tanks for various stuff
-ChargedParticleTrap: nice model, transforms
-toroidal: two similar antimatter tanks and a disk
-PositronTanks[12]: two sizes of tank
-AntimatterTrap: tank for antimatter
-AntimatterTanks[12]: two size of tank
-tanks on converters
+Our tanks left to configue:
+  RV Matter drop tank
+  crashpad: deleted, because kit does not use gases
+  RV Antimatter
+  ChargedParticleTrap: nice model, transforms
+  toroidal: two similar antimatter tanks and a disk
+  PositronTanks[12]: two sizes of tank
+  AntimatterTrap: tank for antimatter
+  AntimatterTanks[12]: two size of tank
+  tanks on converters
+  UniversalStorage: ??
