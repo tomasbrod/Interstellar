@@ -212,8 +212,10 @@ $color_names = array(
 //These resources do not obey CRP convention
 $NonUnityVolumeResources = array('LiquidFuel', 'SolidFuel', 'Oxidizer', 'Ore', 'MonoPropellant', 'RocketParts');
 
-$PrP_units1=1;
-$PrP_units2=1; //173.839644444444; maybe?
+// Procedural parts multipliers
+$PrP_units1=880; // usable volume in liters of single tanks per 1000l of part
+$PrP_units2=860; // usable volume of dual tanks
+$PrP_dry=0.1089; // dry mass multiplier (unsure what, but seems right)
 
 function echo_ifset($pre,&$tab,$key) {
 	if(isset($tab[$key]))
@@ -396,7 +398,7 @@ echo
 "		TANK_TYPE_OPTION
 		{
 			name = $name
-			dryDensity = 0.1089
+			dryDensity = $PrP_dry
 			costMultiplier = 1.0
 			RESOURCE
 			{

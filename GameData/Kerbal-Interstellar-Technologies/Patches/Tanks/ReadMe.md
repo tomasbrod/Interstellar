@@ -32,8 +32,6 @@ Part definition exports variable when it wants to be patched with fuel configs:
 
 Todo:
 
-* wetworks - B9 does not support crew...
-* antimatter
 * verify dry mass and cost of all touched parts
 * disable certain configs when mods are present/absent
 * light fuel tanks for light resources only
@@ -42,6 +40,7 @@ Todo:
 * flight switchable tanks
 * nertea's CryoTanks (they look good!)
 * support [SMURFF](https://forum.kerbalspaceprogram.com/index.php?/topic/117992-17-19-smurff-simple-module-adjustments-for-real-ish-fuel-mass-fractions-191-02019-nov-12/)
+* wetworks - B9 does not support crew...
 
 Flight switchable: CT, CC, wetworks, k&k, mk3
 
