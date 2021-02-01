@@ -278,6 +278,7 @@ echo <<<EOD
 	!RESOURCE[LiterVolume] {}
 }\n
 EOD;
+// smurff: @mass *= multiplier
 file_put_contents("LiquidCT.cfg", ob_get_clean() );
 
 
@@ -334,6 +335,7 @@ echo <<<EOD
 	!RESOURCE[LiterVolume] {}
 }\n
 EOD;
+// smurff: @mass *= multiplier
 file_put_contents("SolidCC.cfg", ob_get_clean() );
 
 
@@ -390,8 +392,10 @@ echo <<<EOD
 	!RESOURCE[LiterVolume] {}
 }\n
 EOD;
+// smurff: @mass *= multiplier
 file_put_contents("NuclearRFC.cfg", ob_get_clean() );
 
+// smurff: CDT @mass *= multiplier
 
 /******* Generic patch for Liquid tanks *******/
 
@@ -528,6 +532,7 @@ echo
 			dryDensity = 0.1089
 			costMultiplier = 1.0
 ";
+//^ smurff
 foreach($contents as $res => $rat):
 $rat*= $PrP_units2;
 echo
@@ -555,6 +560,7 @@ echo
 			}
 		}
 ";
+//^ smurff
 endforeach;
 echo "\t}\n}\n";
 file_put_contents("ProceduralPartsTanks.cfg", ob_get_clean() );
