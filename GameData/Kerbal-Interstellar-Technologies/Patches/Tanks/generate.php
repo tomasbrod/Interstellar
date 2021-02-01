@@ -123,6 +123,7 @@ $mixture_ratios = array(
 
 
 $transform_CT = array(
+ 's','p',
  'Hydrogen' => '1H', 'Kerosene' => 'Kerosene', 'Methane' => '12CH4',
  'Oxygen' => '16O', 'Hydrazine' => '14N2H4', 'Ammonia' => '14NH3',
  'Water' => 'H20', 'CO2' => '12CO2', 'Argon' => '40Ar', 'CO' =>
@@ -219,122 +220,90 @@ function echo_ifset($pre,&$tab,$key) {
 		echo $pre.$tab[$key]."\n";
 }
 
+function printl_ifset($indent, $pre,&$tab,$key) {
+	if(isset($tab[$key])) {
+		echo str_repeat("\t",$indent);
+		echo $pre.$tab[$key]."\n";
+	}
+}
 
-/******* Gibson Cryogenic Tank *******/
+function printl($indent,$text) {
+	echo str_repeat("\t",$indent);
+	echo $text;
+	echo "\n";
+}
 
-ob_start();
-?>
-@PART[CT250?|IST2501lqd]:FOR[Kerbal-Interstellar-Technologies]
+function MakeB9DisableTransform($transforms,$contents)
 {
-	MODULE
-	{
-		name = ModuleB9DisableTransform
-		transform = s
-		transform = p
-<?php
-	foreach($transform_CT as $res => $tra) {
-		if(!in_array("Lqd$res",$liquids) && !in_array($res,$liquids)) {
-			echo "		transform = $tra\n";
+	if(empty($transforms)) return;
+	$contents=array_flip($contents);
+	printl(1,"MODULE {");
+	printl(2,"name = ModuleB9DisableTransform");
+	foreach($transforms as $res => $tra) {
+		if(!isset($contents["Lqd$res"]) && !isset($contents[$res])) {
+			printl(2,"transform = $tra");
 		}
 	}
+	printl(1,"}");
+}
+
+function MakeB9TankConfig($contents,$sif,$transforms=NULL)
+{
+	global $mixture_ratios, $colors, $NonUnityVolumeResources;
+	print("{\n");
+	MakeB9DisableTransform($transforms,$contents);
 ?>
-	}
 	MODULE
 	{
 		name = ModuleB9PartSwitch
 		moduleID = KITTankSwitch
 		//switcherDescription = #LOC_CryoTanks_switcher_fuel_title
 		switcherDescription = Contents
-		switchInFlight = true
+		switchInFlight = <?=$sif?"true\n":"false\n"?>
 		baseVolume = #$/RESOURCE[LiterVolume]/maxAmount$
 <?php
-foreach($liquids as $name):
-$upv = 1;
-if(in_array($name, $NonUnityVolumeResources))
-	$upv = 0.2;
-$name_plain = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$name);
-echo 
-"		SUBTYPE
-		{
-			name = $name
-			title = #\$@RESOURCE_DEFINITION[$name]/displayName\$
-";
-echo_ifset("\t\t\tprimaryColor = ",$colors,$name_plain);
-echo_ifset("\t\t\ttransform = ",$transform_CT,$name_plain);
-echo
-"			transform = l
-			RESOURCE {
-				name = $name
-				unitsPerVolume = $upv
-			}
-		}
-";
-		//addedMass = #$../../massOffset$
-		//addedCost = #$../../costOffset$
-endforeach;
-echo <<<EOD
-	}
+	foreach($contents as $name):
+		printl(2,"SUBTYPE {");
+		printl(3,"name = $name");
+		if(isset($mixture_ratios[$name])):
+			printl(3,"title = #\$@B9_TANK_TYPE[KIT_$name]/title\$");
+			printl(3,"tankType = KIT_$name");
+		else:
+			printl(3,"title = #\$@RESOURCE_DEFINITION[$name]/displayName\$");
+			$name_plain = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$name);
+			printl_ifset(3,"primaryColor = ",$colors,$name_plain);
+			printl_ifset(3,"transform = ",$transforms,$name_plain);
+			$upv = in_array($name, $NonUnityVolumeResources)? 0.2 : 1;
+			printl(3,"RESOURCE {");
+			printl(4,"name = $name");
+			printl(4,"unitsPerVolume = $upv");
+			printl(3,"}");
+		endif;
+		printl(2,"}");
+	endforeach;
+	printl(1,"}");
+	printl(1,"!RESOURCE[LiterVolume] {}");
+}
 
-	!RESOURCE[LiterVolume] {}
-}\n
-EOD;
+
+/******* Gibson Cryogenic Tank *******/
+
+ob_start();
+echo "@PART[CT250?|IST2501lqd]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($liquids,true,$transform_CT);
+//		transform = s
+//		transform = p
 // smurff: @mass *= multiplier
+echo "}\n";
 file_put_contents("LiquidCT.cfg", ob_get_clean() );
 
 
 /******* Gibson Cargo Container *******/
 
 ob_start();
-?>
-@PART[CC250?]:FOR[Kerbal-Interstellar-Technologies]
-{
-	MODULE
-	{
-		name = ModuleB9DisableTransform
-<?php
-	foreach($transform_CC as $res => $tra) {
-		if(!in_array($res,$solids)) {
-			echo "		transform = $tra\n";
-		}
-	}
-?>
-	}
-	MODULE
-	{
-		name = ModuleB9PartSwitch
-		moduleID = KITTankSwitch
-		//switcherDescription = #LOC_CryoTanks_switcher_fuel_title
-		switcherDescription = Contents
-		switchInFlight = true
-		baseVolume = #$/RESOURCE[LiterVolume]/maxAmount$
-<?php
-foreach($solids as $name):
-$upv = 1;
-if(in_array($name, $NonUnityVolumeResources))
-	$upv = 0.2;
-$name_plain = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$name);
-echo 
-"		SUBTYPE
-		{
-			name = $name
-			title = #\$@RESOURCE_DEFINITION[$name]/displayName\$
-";
-echo_ifset("\t\t\tprimaryColor = ",$colors,$name_plain);
-echo_ifset("\t\t\ttransform = ",$transform_CC,$name_plain);
-echo
-"			RESOURCE {
-				name = $name
-				unitsPerVolume = $upv
-			}
-		}
-";
-endforeach;
-echo <<<EOD
-	}
-
-	!RESOURCE[LiterVolume] {}
-}\n
-EOD;
+echo "@PART[CC250?]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($solids,true,$transform_CC);
+echo "}\n";
 // smurff: @mass *= multiplier
 file_put_contents("SolidCC.cfg", ob_get_clean() );
 
@@ -342,56 +311,9 @@ file_put_contents("SolidCC.cfg", ob_get_clean() );
 /******* Gibson Radioactive Fuel Container*******/
 
 ob_start();
-?>
-@PART[RFC250?]:FOR[Kerbal-Interstellar-Technologies]
-{
-	MODULE
-	{
-		name = ModuleB9DisableTransform
-<?php
-	foreach($transform_RFC as $res => $tra) {
-		if(!in_array($res,$radioactives)) {
-			echo "		transform = $tra\n";
-		}
-	}
-?>
-	}
-	MODULE
-	{
-		name = ModuleB9PartSwitch
-		moduleID = KITTankSwitch
-		//switcherDescription = #LOC_CryoTanks_switcher_fuel_title
-		switcherDescription = Contents
-		switchInFlight = true
-		baseVolume = #$/RESOURCE[LiterVolume]/maxAmount$
-<?php
-foreach($radioactives as $name):
-$upv = 1;
-if(in_array($name, $NonUnityVolumeResources))
-	$upv = 0.2;
-$name_plain = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$name);
-echo 
-"		SUBTYPE
-		{
-			name = $name
-			title = #\$@RESOURCE_DEFINITION[$name]/displayName\$
-";
-echo_ifset("\t\t\tprimaryColor = ",$colors,$name_plain);
-echo_ifset("\t\t\ttransform = ",$transform_RFC,$name_plain);
-echo
-"			RESOURCE {
-				name = $name
-				unitsPerVolume = $upv
-			}
-		}
-";
-endforeach;
-echo <<<EOD
-	}
-
-	!RESOURCE[LiterVolume] {}
-}\n
-EOD;
+echo "@PART[RFC250?]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($radioactives,true,$transform_RFC);
+echo "}\n";
 // smurff: @mass *= multiplier
 file_put_contents("NuclearRFC.cfg", ob_get_clean() );
 
@@ -400,95 +322,18 @@ file_put_contents("NuclearRFC.cfg", ob_get_clean() );
 /******* Generic patch for Liquid tanks *******/
 
 ob_start();
-?>
-@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Liquid]]]:FOR[Kerbal-Interstellar-Technologies]
-{
-	MODULE
-	{
-		name = ModuleB9PartSwitch
-		moduleID = KITTankSwitch
-		//switcherDescription = #LOC_CryoTanks_switcher_fuel_title
-		switcherDescription = Contents
-		switchInFlight = true
-		baseVolume = #$/RESOURCE[LiterVolume]/maxAmount$
-<?php
-foreach($liquids as $name):
-$upv = 1;
-if(in_array($name, $NonUnityVolumeResources))
-	$upv = 0.2;
-$name_plain = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$name);
-echo 
-"		SUBTYPE
-		{
-			name = $name
-			title = #\$@RESOURCE_DEFINITION[$name]/displayName\$
-";
-echo_ifset("\t\t\tprimaryColor = ",$colors,$name_plain);
-echo
-"			RESOURCE {
-				name = $name
-				unitsPerVolume = $upv
-			}
-		}
-";
-endforeach;
-echo <<<EOD
-	}
-
-	!RESOURCE[LiterVolume] {}
-}\n
-EOD;
+echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Liquid]]]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($liquids,true);
+echo "}\n";
 file_put_contents("GenericLiquid.cfg", ob_get_clean() );
 
 
 /******* Generic patch for Dual tanks *******/
 
 ob_start();
-?>
-@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Dual]]]:FOR[Kerbal-Interstellar-Technologies]
-{
-	MODULE
-	{
-		name = ModuleB9PartSwitch
-		moduleID = KITTankSwitch
-		//switcherDescription = #LOC_CryoTanks_switcher_fuel_title
-		switcherDescription = Contents
-		switchInFlight = false
-		baseVolume = #$/RESOURCE[LiterVolume]/maxAmount$
-<?php
-foreach($mixtures as $name):
-echo 
-"		SUBTYPE
-		{
-			name = $name\n";
-if(isset($mixture_ratios[$name])):
-//$name_id = $name;
-//if($name!='LFO')
-$name_id = "KIT_$name";
-echo
-"			title = #\$@B9_TANK_TYPE[$name_id]/title\$
-			tankType = $name_id\n";
-else:
-$name_plain = preg_replace(array('/^Lqd/','/Gas$/'),array('',''),$name);
-echo_ifset("\t\t\tprimaryColor = ",$colors,$name_plain);
-$upv = 1;
-if(in_array($name, $NonUnityVolumeResources))
-	$upv = 0.2;
-echo
-"			#\$@RESOURCE_DEFINITION[$name]/displayName\$
-			RESOURCE {
-				name = $name
-				unitsPerVolume = $upv
-			}\n";
-endif;
-echo "\t\t}\n";
-endforeach;
-echo <<<EOD
-	}
-
-	!RESOURCE[LiterVolume] {}
-}\n
-EOD;
+echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Dual]]]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($mixtures,false);
+echo "}\n";
 file_put_contents("GenericDual.cfg", ob_get_clean() );
 
 

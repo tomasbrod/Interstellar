@@ -16,24 +16,25 @@ https://github.com/KSP-RO/ProceduralParts/wiki/Config-Parameter-Documentation
 
 Part definition exports variable when it wants to be patched with fuel configs:
 
-`RESOURCE {
-  name = LiterVolume
-  maxAmount = 1000
-  TankType = ...
-}`
+```
+  RESOURCE {
+    name = LiterVolume
+    maxAmount = 1000
+    TankType = ...
+  }
+```
 
-TankType = Liquid
-TankType = Double
-(TankType = Solid)
-(TankType = Radioactive)
-(TankType = LightCryo (Hydrogen and other light cryogenic fuels))
+* TankType = Liquid
+* TankType = Double
+* (TankType = Solid)
+* (TankType = Radioactive)
+* (TankType = LightCryo (Hydrogen and other light cryogenic fuels))
 
 Todo:
 
 * wetworks - B9 does not support crew...
 * antimatter
 * verify dry mass and cost of all touched parts
-* capacitors
 * disable certain configs when mods are present/absent
 * light fuel tanks for light resources only
 * generic ore and rcs tanks
@@ -44,16 +45,22 @@ Todo:
 
 Flight switchable: CT, CC, wetworks, k&k, mk3
 
+- all radioactive containers
+- all cargo containers
+- no dual tanks
+
 Discounted: (tbd)
 
 Our tanks left to configue:
-  RV Matter drop tank
-  crashpad: deleted, because kit does not use gases
-  RV Antimatter
-  ChargedParticleTrap: nice model, transforms
-  toroidal: two similar antimatter tanks and a disk
-  PositronTanks[12]: two sizes of tank
-  AntimatterTrap: tank for antimatter
-  AntimatterTanks[12]: two size of tank
-  tanks on converters
-  UniversalStorage: ??
+  batteries;
+  antimatter;
+  RV Matter drop tank;
+  crashpad: deleted, because kit does not use gases;
+  RV Antimatter;
+  ChargedParticleTrap: nice model, transforms;
+  toroidal: two similar antimatter tanks and a disk;
+  PositronTanks[12]: two sizes of tank;
+  AntimatterTrap: tank for antimatter;
+  AntimatterTanks[12]: two size of tank;
+  tanks on converters;
+  UniversalStorage: ??;
