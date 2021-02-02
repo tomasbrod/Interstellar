@@ -26,9 +26,9 @@ Part definition exports variable when it wants to be patched with fuel configs:
 
 * TankType = Liquid
 * TankType = Double
-* (TankType = Solid)
-* (TankType = Radioactive)
-* (TankType = LightCryo (Hydrogen and other light cryogenic fuels))
+* TankType = Solid
+* TankType = Nuclear
+* TankType = LightCryo (Hydrogen and other light cryogenic fuels)
 
 Todo:
 

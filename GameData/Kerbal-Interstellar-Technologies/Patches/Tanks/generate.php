@@ -34,13 +34,13 @@ $liquids = array(
 );
 
 $LightLiquids = array(
-	'LqdHydrogen',//425
-	'LqdMethane',//1809
-	'LqdDeuterium',//649
-	'LqdHelium',//714
-	'LqdHe3',//236
-	'LqdTritium',//1280
+	'LqdHydrogen', // 425
+	'LqdMethane',  //1809 - this is over 4x heavy as H
 	'LqdDiborane', //1684
+	'LqdDeuterium',// 649
+	'LqdHelium',   // 714
+	'LqdHe3',      // 236
+	'LqdTritium',  //1280
 	'FusionPellets', //864
 );
 
@@ -70,24 +70,6 @@ $solids = array(
 	'Spodumene',
 );
 
-$radioactive = array(
-	'Actinides',
-	'AntiHydrogen',
-	'Antimatter',
-	'DepletedFuel',
-	'DepletedUranium',
-	'EnrichedUranium',
-	'Plutonium-238',
-	'Positrons',
-	'Thorium',
-	'ThF4',
-	'UF4',
-	'Uraninite',
-	'UraniumNitride',
-	'NuclearSaltWater',
-	'Uranium-233',
-);
-
 $mixtures = array(
 	'LFO',
 	'HydroLOX',
@@ -112,6 +94,14 @@ $radioactives = array(
 	'UraniumNitride',
 );
 
+$extra_i_dont_know = array(
+	'AntiHydrogen',
+	'Antimatter',
+	'Positrons',
+	'NuclearSaltWater',
+	'Uranium-233',
+);
+
 $mixture_ratios = array(
 	'LFO' => array( 'LiquidFuel'=>0.45, 'Oxidizer'=>0.55 ),
 	'HydroLOX' => array( 'LqdHydrogen'=>0.8, 'LqdOxygen'=>0.2 ),
@@ -119,6 +109,13 @@ $mixture_ratios = array(
 	'KeroLOX' => array( 'Kerosene'=>0.456, 'LqdOxygen'=>0.544 ),
 	'HydraNitro' => array( 'Hydrazine'=>0.51, 'NTO'=>0.49 ),
 	'HydrogenFluorine' => array( 'LqdHydrogen'=>0.66, 'LqdFluorine'=>0.34 ),
+);
+
+$needs = array(
+	//'LFO' => '!RealFuels',
+	//'LiquidFuel' => '!RealFuels',
+	//'Oxidizer' => '!RealFuels',
+	'MonoPropellant' => '!RealFuels',
 );
 
 
@@ -237,6 +234,7 @@ function printl($indent,$text) {
 
 function MakeB9DisableTransform($transforms,$contents)
 {
+	global $needs;
 	if(empty($transforms)) return;
 	$contents=array_flip($contents);
 	printl(1,"MODULE {");
@@ -251,7 +249,7 @@ function MakeB9DisableTransform($transforms,$contents)
 
 function MakeB9TankConfig($contents,$sif,$transforms=NULL)
 {
-	global $mixture_ratios, $colors, $NonUnityVolumeResources;
+	global $mixture_ratios, $colors, $NonUnityVolumeResources,$needs;
 	print("{\n");
 	MakeB9DisableTransform($transforms,$contents);
 ?>
@@ -265,7 +263,9 @@ function MakeB9TankConfig($contents,$sif,$transforms=NULL)
 		baseVolume = #$/RESOURCE[LiterVolume]/maxAmount$
 <?php
 	foreach($contents as $name):
-		printl(2,"SUBTYPE {");
+		if(empty($needs[$name]))
+			printl(2,"SUBTYPE {");
+			else printl(2,"SUBTYPE:NEEDS[".$needs[$name]."] {");
 		printl(3,"name = $name");
 		if(isset($mixture_ratios[$name])):
 			printl(3,"title = #\$@B9_TANK_TYPE[KIT_$name]/title\$");
@@ -321,7 +321,7 @@ file_put_contents("NuclearRFC.cfg", ob_get_clean() );
 
 // smurff: CDT @mass *= multiplier
 
-/******* Generic patch for Liquid tanks *******/
+/******* Generic patches for Liquid tanks *******/
 
 ob_start();
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Liquid]]]:FOR[Kerbal-Interstellar-Technologies]\n";
@@ -329,14 +329,29 @@ MakeB9TankConfig($liquids,true);
 echo "}\n";
 file_put_contents("GenericLiquid.cfg", ob_get_clean() );
 
-
-/******* Generic patch for Dual tanks *******/
-
 ob_start();
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Dual]]]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($mixtures,false);
 echo "}\n";
 file_put_contents("GenericDual.cfg", ob_get_clean() );
+
+ob_start();
+echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Solid]]]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($solids,false);
+echo "}\n";
+file_put_contents("GenericSolid.cfg", ob_get_clean() );
+
+ob_start();
+echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Nuclear]]]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($radioactives,false);
+echo "}\n";
+file_put_contents("GenericNuclear.cfg", ob_get_clean() );
+
+ob_start();
+echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[LightCryo]]]:FOR[Kerbal-Interstellar-Technologies]\n";
+MakeB9TankConfig($LightLiquids,false);
+echo "}\n";
+file_put_contents("GenericLight.cfg", ob_get_clean() );
 
 
 /******* Procedural Parts Fuel Tank *******/
