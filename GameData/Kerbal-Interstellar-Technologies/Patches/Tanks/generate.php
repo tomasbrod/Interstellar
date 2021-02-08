@@ -291,6 +291,7 @@ function MakeB9TankConfig($contents,$sif,$transforms=NULL)
 /******* Gibson Cryogenic Tank *******/
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[CT250?|IST2501lqd]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($liquids,true,$transform_CT);
 //		transform = s
@@ -303,6 +304,7 @@ file_put_contents("LiquidCT.cfg", ob_get_clean() );
 /******* Gibson Cargo Container *******/
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[CC250?]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($solids,true,$transform_CC);
 echo "}\n";
@@ -313,6 +315,7 @@ file_put_contents("SolidCC.cfg", ob_get_clean() );
 /******* Gibson Radioactive Fuel Container*******/
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[RFC250?]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($radioactives,true,$transform_RFC);
 echo "}\n";
@@ -324,30 +327,35 @@ file_put_contents("NuclearRFC.cfg", ob_get_clean() );
 /******* Generic patches for Liquid tanks *******/
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Liquid]]]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($liquids,true);
 echo "}\n";
 file_put_contents("GenericLiquid.cfg", ob_get_clean() );
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Dual]]]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($mixtures,false);
 echo "}\n";
 file_put_contents("GenericDual.cfg", ob_get_clean() );
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Solid]]]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($solids,false);
 echo "}\n";
 file_put_contents("GenericSolid.cfg", ob_get_clean() );
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Nuclear]]]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($radioactives,false);
 echo "}\n";
 file_put_contents("GenericNuclear.cfg", ob_get_clean() );
 
 ob_start();
+printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[LightCryo]]]:FOR[Kerbal-Interstellar-Technologies]\n";
 MakeB9TankConfig($LightLiquids,false);
 echo "}\n";
@@ -358,6 +366,7 @@ file_put_contents("GenericLight.cfg", ob_get_clean() );
 
 ob_start();
 ?>
+// This file was automatically generated
 +PART[proceduralTankLiquid]:NEEDS[ProceduralParts]:FIRST
 {
 	@name = proceduralTankKIT
@@ -431,6 +440,7 @@ file_put_contents("ProceduralPartsTanks.cfg", ob_get_clean() );
 /******* B9_TANK_TYPEs for Dual Tanks *******/
 
 ob_start();
+printl(0,'// This file was automatically generated');
 //Oxidiser based mixtures are defined in CryoTanks/CryoTanksFuelTankTypes.cfg
 foreach($mixture_ratios as $name=>$contents):
 //even thought LFO is predefined by B9, use our own definition to account for
