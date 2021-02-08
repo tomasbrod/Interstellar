@@ -33,7 +33,6 @@ Part definition exports variable when it wants to be patched with fuel configs:
 Todo:
 
 * verify dry mass and cost of all touched parts
-* disable certain configs when mods are present/absent
 * light fuel tanks for light resources only
 * generic ore and rcs tanks
 * K&K radioactive tanks

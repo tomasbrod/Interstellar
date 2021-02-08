@@ -112,9 +112,9 @@ $mixture_ratios = array(
 );
 
 $needs = array(
-	//'LFO' => '!RealFuels',
-	//'LiquidFuel' => '!RealFuels',
-	//'Oxidizer' => '!RealFuels',
+	'LFO' => '!RealFuels',
+	'LiquidFuel' => '!RealFuels',
+	'Oxidizer' => '!RealFuels',
 	'MonoPropellant' => '!RealFuels',
 );
 
@@ -395,43 +395,32 @@ ob_start();
 	{
 		!TANK_TYPE_OPTION,* {}
 <?php
-foreach($mixture_ratios as $name=>$contents):
-echo
-"		TANK_TYPE_OPTION
-		{
-			name = $name
-			dryDensity = 0.1089
-			costMultiplier = 1.0
-";
-//^ smurff
-foreach($contents as $res => $rat):
-$rat*= $PrP_units2;
-echo
-"			RESOURCE
-			{
-				name = $res
-				unitsPerKL = $rat
-			}
-";
-endforeach;
-echo "\t\t}\n";
-endforeach;
-
-foreach($liquids as $name):
-echo 
-"		TANK_TYPE_OPTION
-		{
-			name = $name
-			dryDensity = $PrP_dry
-			costMultiplier = 1.0
-			RESOURCE
-			{
-				name = $name
-				unitsPerKL = $PrP_units1
-			}
-		}
-";
-//^ smurff
+$contents = array_keys(array_flip($mixtures) + array_flip($liquids));
+foreach($contents as $name):
+	if(empty($needs[$name]))
+		printl(2,"TANK_TYPE_OPTION {");
+		else printl(2,"TANK_TYPE_OPTION:NEEDS[".$needs[$name]."] {");
+	printl(3,"name = $name");
+	printl(3,"dryDensity = 0.1089");
+	printl(3,"costMultiplier = 1.0");
+	if(isset($mixture_ratios[$name])):
+		foreach($mixture_ratios[$name] as $res => $rat):
+			$upv = in_array($res, $NonUnityVolumeResources)? 0.2 : 1;
+			$rat*= $PrP_units2 * $upv;
+			printl(3,"RESOURCE {");
+			printl(4,"name = $res");
+			printl(4,"unitsPerKL = $rat");
+			printl(3,"}");
+		endforeach;
+	else:
+		$upv = in_array($name, $NonUnityVolumeResources)? 0.2 : 1;
+		$upv *= $PrP_units1;
+		printl(3,"RESOURCE {");
+		printl(4,"name = $name");
+		printl(4,"unitsPerKL = $upv");
+		printl(3,"}");
+	endif;
+	printl(2,"}");
 endforeach;
 echo "\t}\n}\n";
 file_put_contents("ProceduralPartsTanks.cfg", ob_get_clean() );
@@ -440,8 +429,7 @@ file_put_contents("ProceduralPartsTanks.cfg", ob_get_clean() );
 /******* B9_TANK_TYPEs for Dual Tanks *******/
 
 ob_start();
-printl(0,'// This file was automatically generated');
-//Oxidiser based mixtures are defined in CryoTanks/CryoTanksFuelTankTypes.cfg
+printl(0,'// This file was automatically generated');//Oxidiser based mixtures are defined in CryoTanks/CryoTanksFuelTankTypes.cfg
 foreach($mixture_ratios as $name=>$contents):
 //even thought LFO is predefined by B9, use our own definition to account for
 //stock resource volume of 5 and dry weight configuration
