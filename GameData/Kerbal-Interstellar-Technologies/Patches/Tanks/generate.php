@@ -79,6 +79,7 @@ $mixtures = array(
 	'HydrogenFluorine',
 	'LqdHydrogen',
 	'LqdMethane',
+	'LqdOxygen',
 );
 
 $radioactives = array(
@@ -343,21 +344,21 @@ file_put_contents("GenericDual.cfg", ob_get_clean() );
 ob_start();
 printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Solid]]]:FOR[Kerbal-Interstellar-Technologies]\n";
-MakeB9TankConfig($solids,false);
+MakeB9TankConfig($solids,true);
 echo "}\n";
 file_put_contents("GenericSolid.cfg", ob_get_clean() );
 
 ob_start();
 printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[Nuclear]]]:FOR[Kerbal-Interstellar-Technologies]\n";
-MakeB9TankConfig($radioactives,false);
+MakeB9TankConfig($radioactives,true);
 echo "}\n";
 file_put_contents("GenericNuclear.cfg", ob_get_clean() );
 
 ob_start();
 printl(0,'// This file was automatically generated');
 echo "@PART[*]:HAS[@RESOURCE[LiterVolume]:HAS[#TankType[LightCryo]]]:FOR[Kerbal-Interstellar-Technologies]\n";
-MakeB9TankConfig($LightLiquids,false);
+MakeB9TankConfig($LightLiquids,true);
 echo "}\n";
 file_put_contents("GenericLight.cfg", ob_get_clean() );
 
@@ -395,6 +396,7 @@ ob_start();
 	{
 		!TANK_TYPE_OPTION,* {}
 <?php
+// Merge Dual and Liquid tank contents into one array (no duplicates)
 $contents = array_keys(array_flip($mixtures) + array_flip($liquids));
 foreach($contents as $name):
 	if(empty($needs[$name]))
@@ -429,7 +431,8 @@ file_put_contents("ProceduralPartsTanks.cfg", ob_get_clean() );
 /******* B9_TANK_TYPEs for Dual Tanks *******/
 
 ob_start();
-printl(0,'// This file was automatically generated');//Oxidiser based mixtures are defined in CryoTanks/CryoTanksFuelTankTypes.cfg
+printl(0,'// This file was automatically generated');
+//Oxidiser based mixtures are defined in CryoTanks/CryoTanksFuelTankTypes.cfg
 foreach($mixture_ratios as $name=>$contents):
 //even thought LFO is predefined by B9, use our own definition to account for
 //stock resource volume of 5 and dry weight configuration
